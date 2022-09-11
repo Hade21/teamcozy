@@ -12,7 +12,7 @@ app.use(bodyParser.json({ limit: "30mb" }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use("/posts", postsRouter);
 
-const PORT: number | string = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 const MONGO_URI: string =
   "mongodb+srv://adminTeamCozy:sgiaWdPhjBYpl4R2@teamcozy.wjmezvi.mongodb.net/?retryWrites=true&w=majority";
 

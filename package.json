@@ -2,9 +2,10 @@
   "name": "teamcozy",
   "version": "1.0.0",
   "description": "teamcozy server app",
-  "main": "index.js",
+  "main": "src/main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts"
   },
   "keywords": [
