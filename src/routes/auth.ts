@@ -6,3 +6,5 @@ const router = exepress.Router();
 
 router.post("/signup", signupValidator, signup);
 router.post("/signin", signinValidator, signin);
+
+export default router;
