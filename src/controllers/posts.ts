@@ -1,6 +1,22 @@
 import PostMessage from "../models/postMessages";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+
+const authorizeAccount = (req: Request, res: Response, next: NextFunction) => {
+  const header = req.headers["authorization"];
+  const token = header && header?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "Forbidden Access!" });
+    }
+    req.body.user = user;
+    next();
+  });
+};
 
 export const getPost = async (req: Request, res: Response) => {
   try {
@@ -12,7 +28,12 @@ export const getPost = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  authorizeAccount(req, res, next);
   const post = req.body;
   const newPost = new PostMessage(post);
   try {
@@ -25,7 +46,12 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updatePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  authorizeAccount(req, res, next);
   const { id: _id } = req.params;
   const post = req.body;
 
@@ -46,7 +72,12 @@ export const updatePost = async (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  authorizeAccount(req, res, next);
   const { id: _id } = req.params;
 
   try {
