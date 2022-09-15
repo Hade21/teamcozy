@@ -1,6 +1,6 @@
 import exepress from "express";
-import { signin, signup } from "src/controllers/auth";
-import { signinValidator, signupValidator } from "src/validator/auth";
+import { signin, signup } from "../controllers/auth";
+import { signinValidator, signupValidator } from "../validator/auth";
 
 const router = exepress.Router();
 
