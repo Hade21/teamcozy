@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  authorizeAccount,
   createPost,
   deletePost,
   getPost,
@@ -9,8 +10,8 @@ import {
 const router = express.Router();
 
 router.get("/", getPost);
-router.post("/", createPost);
-router.patch("/:id", updatePost);
-router.delete("/:id", deletePost);
+router.post("/", authorizeAccount, createPost);
+router.patch("/:id", authorizeAccount, updatePost);
+router.delete("/:id", authorizeAccount, deletePost);
 
 export default router;

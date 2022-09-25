@@ -3,28 +3,38 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-const authorizeAccount = (req: Request, res: Response, next: NextFunction) => {
+export const authorizeAccount = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const header = req.headers["authorization"];
   const token = header && header?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
+  } else {
+    jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET as string,
+      (err, user) => {
+        if (err) {
+          return res.status(403).json({ message: "Forbidden Access!" });
+        } else {
+          req.body.user = user;
+          next();
+        }
+      }
+    );
   }
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "Forbidden Access!" });
-    }
-    req.body.user = user;
-    next();
-  });
 };
 
 export const getPost = async (req: Request, res: Response) => {
   try {
     const post = await PostMessage.find();
-
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (error) {
-    if (error instanceof Error) return res.status(404).json(error.message);
+    if (error instanceof Error)
+      return res.status(404).json({ message: error.message });
   }
 };
 
@@ -33,16 +43,16 @@ export const createPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  authorizeAccount(req, res, next);
   const post = req.body;
   const newPost = new PostMessage(post);
   try {
     await newPost.save();
-
-    res.status(201).json(newPost);
+    return res.status(201).json(newPost);
   } catch (error) {
-    if (error instanceof Error)
+    if (error instanceof Error) {
+      console.log(error.message);
       return res.status(409).json({ message: error.message });
+    }
   }
 };
 
@@ -59,13 +69,13 @@ export const updatePost = async (
     if (!mongoose.Types.ObjectId.isValid(_id))
       return res.status(404).json({ message: "No post found with id" });
 
-    const upatedPost = await PostMessage.findByIdAndUpdate(
+    const updatedPost = await PostMessage.findByIdAndUpdate(
       _id,
       { ...post, _id },
       { new: true }
     );
 
-    return res.status(200).json(updatePost);
+    return res.status(200).json(updatedPost);
   } catch (error) {
     if (error instanceof Error)
       return res.status(409).json({ message: error.message });

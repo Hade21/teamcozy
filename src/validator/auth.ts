@@ -29,20 +29,6 @@ export const signupValidator = [
     .withMessage("Password must be a string")
     .isLength({ min: 8, max: 24 })
     .withMessage("Password must be at least 6 characters long"),
-  body("confirmPassword")
-    .exists({ checkFalsy: true })
-    .withMessage("Confirm password is required")
-    .bail()
-    .isString()
-    .withMessage("Confirm password must be a string")
-    .isLength({ min: 8, max: 24 })
-    .withMessage("Confirm password must be at least 6 characters long")
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Passwords do not match");
-      }
-      return true;
-    }),
   body("profilePicture")
     .optional()
     .isString()

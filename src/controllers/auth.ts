@@ -43,7 +43,7 @@ export const signup = async (req: Request, res: Response) => {
 
 export const signin = async (req: Request, res: Response) => {
   const errors = validationResult(req);
-  if (errors) {
+  if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   const { user, password } = req.body;
@@ -61,6 +61,7 @@ export const signin = async (req: Request, res: Response) => {
           process.env.ACCESS_TOKEN_SECRET as string,
           { expiresIn: "1d" }
         );
+        console.log(token);
         return res
           .status(200)
           .json({ uid: username._id, username: username.username, token });
@@ -69,6 +70,7 @@ export const signin = async (req: Request, res: Response) => {
     }
     if (email) {
       if (await bcrypt.compare(password, email.password)) {
+        console.log(email);
         const token = jwt.sign(
           { id: email._id, username: email.username },
           process.env.ACCESS_TOKEN_SECRET as string,
